@@ -564,6 +564,13 @@ pub enum Delivery {
     Failed,
 }
 
+impl Delivery {
+    /// Whether an outgoing message is still pending.
+    pub fn in_flight(self) -> bool {
+        matches!(self, Delivery::Pending)
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Message {
     /// WhatsApp message id, unique within a chat.
@@ -1537,7 +1544,7 @@ impl Content {
 }
 
 /// The viewer kind of a file on disk, from its name alone.
-pub(crate) fn gallery_kind_for_path(path: &Path) -> Option<GalleryKind> {
+pub fn gallery_kind_for_path(path: &Path) -> Option<GalleryKind> {
     gallery_file(&path.file_name()?.to_string_lossy())
 }
 
@@ -1673,7 +1680,7 @@ fn with_caption(label: &str, caption: &Option<String>) -> String {
 }
 
 /// Maximum size of an attachment downloaded without the reader asking.
-pub(crate) const ATTACHMENT_DOWNLOAD_LIMIT: u64 = 64 * 1024 * 1024;
+pub const ATTACHMENT_DOWNLOAD_LIMIT: u64 = 64 * 1024 * 1024;
 
 /// Attachment metadata, download state, and optional local file. Download keys
 /// remain in the archive's raw message.

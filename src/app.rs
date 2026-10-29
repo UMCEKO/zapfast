@@ -10956,13 +10956,6 @@ fn write_clipboard_image(image: &crate::model::DecodedImage) -> Result<(), Strin
     })
 }
 
-impl Delivery {
-    /// Whether an outgoing message is still pending.
-    pub fn in_flight(self) -> bool {
-        matches!(self, Delivery::Pending)
-    }
-}
-
 /// Whether an incoming message in this chat warrants a desktop notification.
 ///
 /// Archived chats stay silent, direct and group alike, and speak up again once
@@ -11379,7 +11372,7 @@ mod tests {
         let run = |reader: bool| {
             let directory = tempfile::tempdir().unwrap();
             let mut app = App::headless(AppDirs::under(directory.path()), Settings::default()).0;
-            let ctx = crate::motion::tests::reading(reader);
+            let ctx = crate::motion::fixtures::reading(reader);
             app.waker.attach(&ctx);
             app.recording = Some(Recorder::rehearsal());
             let mut output = ctx.run_ui(egui::RawInput::default(), |ui| app.tick_audio(ui.ctx()));

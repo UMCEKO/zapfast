@@ -672,7 +672,7 @@ fn repack_glyph_vertices(row: &mut egui::epaint::text::Row) {
     row.visuals.glyph_vertex_range = range.start..range.start + glyph_len;
 }
 
-pub(crate) fn is_strong_rtl(c: char) -> bool {
+pub fn is_strong_rtl(c: char) -> bool {
     matches!(
         CodePointMapData::<BidiClass>::new().get(c),
         BidiClass::RightToLeft | BidiClass::ArabicLetter
@@ -690,8 +690,8 @@ pub fn is_rtl(c: char) -> bool {
 /// characters that draw nothing of their own. ASCII paired
 /// brackets must also face their resolved direction: the glyph's ink in the font
 /// atlas leans the way a mirrored or unmirrored bracket would.
-#[cfg(test)]
-pub(crate) fn assert_rows_follow_uba(galley: &Galley, atlas: &egui::ColorImage) {
+#[cfg(any(test, feature = "test-support"))]
+pub fn assert_rows_follow_uba(galley: &Galley, atlas: &egui::ColorImage) {
     use unicode_bidi::BidiDataSource as _;
     let text = galley.text();
     for (index, placed) in galley.rows.iter().enumerate() {
@@ -771,7 +771,7 @@ pub(crate) fn assert_rows_follow_uba(galley: &Galley, atlas: &egui::ColorImage) 
 }
 
 /// Whether the glyph's middle bulges right of its tips, as `)`, `]`, and `}` do.
-#[cfg(test)]
+#[cfg(any(test, feature = "test-support"))]
 fn ink_leans_right(atlas: &egui::ColorImage, glyph: &Glyph) -> bool {
     let [left, top] = glyph.uv_rect.min;
     let [right, bottom] = glyph.uv_rect.max;
@@ -797,8 +797,8 @@ fn ink_leans_right(atlas: &egui::ColorImage, glyph: &Glyph) -> bool {
 }
 
 /// Every row's ink ends at the same right edge.
-#[cfg(test)]
-pub(crate) fn assert_right_aligned(galley: &Galley) {
+#[cfg(any(test, feature = "test-support"))]
+pub fn assert_right_aligned(galley: &Galley) {
     let edges: Vec<f32> = galley
         .rows
         .iter()

@@ -14,13 +14,13 @@ use crate::model::{
 };
 use crate::paths::AccountDirs;
 
-pub(crate) mod picture_edit;
+pub mod picture_edit;
 
 // Re-exported so the picker can detect pasted Signal pack links.
 mod read_sync;
-pub(crate) mod sticker_import;
+pub mod sticker_import;
 mod sticker_maker;
-pub(crate) mod sticker_store;
+pub mod sticker_store;
 mod worker;
 pub use worker::{PINNED_CHATS, PLUS_PINNED_CHATS, host_owned_presence};
 
@@ -1593,8 +1593,8 @@ impl Backend {
     }
 
     /// A detached backend whose startup permit the test can watch.
-    #[cfg(test)]
-    pub(crate) fn detached_with_startup() -> (Self, tokio::sync::oneshot::Receiver<()>) {
+    #[cfg(any(test, feature = "test-support"))]
+    pub fn detached_with_startup() -> (Self, tokio::sync::oneshot::Receiver<()>) {
         let (mut backend, _) = Self::detached();
         let (startup, started) = tokio::sync::oneshot::channel();
         backend.startup = Some(startup);
@@ -1602,15 +1602,15 @@ impl Backend {
     }
 
     /// Records commands without a runtime or network connection.
-    #[cfg(test)]
-    pub(crate) fn recording() -> (Self, mpsc::UnboundedReceiver<Command>) {
+    #[cfg(any(test, feature = "test-support"))]
+    pub fn recording() -> (Self, mpsc::UnboundedReceiver<Command>) {
         let (backend, inbox, _) = Self::recording_with_events();
         (backend, inbox)
     }
 
     /// Records commands and lets a test deliver events.
-    #[cfg(test)]
-    pub(crate) fn recording_with_events() -> (
+    #[cfg(any(test, feature = "test-support"))]
+    pub fn recording_with_events() -> (
         Self,
         mpsc::UnboundedReceiver<Command>,
         std::sync::mpsc::Sender<Event>,
@@ -1647,13 +1647,13 @@ impl Backend {
 
     /// Captures real UI commands for an offline demo's local responder.
     #[cfg(any(test, feature = "demo"))]
-    pub(crate) fn record_demo_commands(&mut self) {
+    pub fn record_demo_commands(&mut self) {
         assert!(self.offline && self.thread.is_none());
         self.demo_commands = Some(Default::default());
     }
 
     #[cfg(any(test, feature = "demo"))]
-    pub(crate) fn take_demo_commands(&self) -> Vec<Command> {
+    pub fn take_demo_commands(&self) -> Vec<Command> {
         self.demo_commands
             .as_ref()
             .map_or_else(Vec::new, |commands| {
