@@ -3,7 +3,23 @@
 //! The UI uses Inter's font weights and Lucide icons. [`Palette`] holds all
 //! light and dark theme colors.
 
+use std::sync::atomic::{AtomicBool, Ordering};
+
 use egui::{Color32, CornerRadius, Response, Sense, Stroke, Vec2};
+
+static BACKDROP: AtomicBool = AtomicBool::new(false);
+
+/// Whether the desktop shows through the window this frame: the Messages
+/// theme is on and the platform gave the window its material.
+pub fn backdrop_active() -> bool {
+    BACKDROP.load(Ordering::Relaxed)
+}
+
+/// Records what the platform gave the window this frame; only the backdrop
+/// sets it.
+pub fn set_backdrop_active(active: bool) {
+    BACKDROP.store(active, Ordering::Relaxed);
+}
 
 /// A local JSON palette, known by its filename in the themes directory.
 pub type CustomTheme = fastframe_theme::CustomTheme<Palette>;
@@ -252,7 +268,7 @@ impl Palette {
 
     /// Whether this is the Messages theme's glass: a frosted header, glass
     /// pills and tints, on every platform. Whether the desktop also shows
-    /// through the window is [`crate::backdrop::active`].
+    /// through the window is [`backdrop_active`].
     pub fn vibrant(&self) -> bool {
         self.bubbles == BubbleStyle::Messages
     }
@@ -260,7 +276,7 @@ impl Palette {
     /// The chat list's background. Over a window's material it only darkens
     /// it a little; without one, it is the panel's own colour.
     pub fn sidebar(&self) -> Color32 {
-        if self.vibrant() && crate::backdrop::active() {
+        if self.vibrant() && backdrop_active() {
             self.panel.gamma_multiply(SIDEBAR_TINT)
         } else {
             self.panel

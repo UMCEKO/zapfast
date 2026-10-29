@@ -814,6 +814,18 @@ pub(crate) fn assert_right_aligned(galley: &Galley) {
     }
 }
 
+#[cfg(any(test, feature = "demo"))]
+/// Synthetic mixed-direction lines for the `rtl-self` page, one message each.
+///
+/// They cover neutrals, numbers, brackets, embedded Latin, a repeated-letter
+/// word pair, bold, a link, emoji inside Hebrew and Arabic paragraphs, and
+/// Arabic lam ligatures in a line long enough to wrap.
+pub const RTL_SELF_CHAT: [&str; 3] = [
+    "בדיקת RTL בלבד\nסער + מירון = ❤️\nשלום ❤️ עולם\nשלום (test 123) עולם!\nשלום 12:34, מחיר 50₪.\nHello שלום עולם world ❤️\nمرحبا بالعالم ❤️ (123)\nשלום 👨‍👩‍👧‍👦 עולם",
+    "שלום!\nשלום 123\nHello שלום עולם end\nאב גד בא\nשלום (עולם)\nשלום *עולם* !\nשלום https://example.com עולם",
+    "إلى السطر التالي\nالله أكبر، لا بأس 🌙\nهذا نص عربي طويل يختبر ترتيب الأسطر عندما تلتف الكلمات داخل فقاعة رسالة ضيقة إلى السطر التالي",
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1293,7 +1305,7 @@ mod tests {
                         link: Color32::LIGHT_BLUE,
                         mention: Color32::GREEN,
                     };
-                    for text in crate::demo::RTL_SELF_CHAT {
+                    for text in RTL_SELF_CHAT {
                         let laid = crate::markup::layout(ui, text, &[], &style, 400.0);
                         galleys.borrow_mut().push(laid.galley);
                     }

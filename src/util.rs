@@ -24,6 +24,13 @@ pub fn international_phone(input: &str) -> Option<String> {
     (!bracket && (7..=15).contains(&digits.len()) && !digits.starts_with('0')).then_some(digits)
 }
 
+/// Whether this file can be decoded and sent as a WhatsApp view-once photo.
+pub fn is_view_once_photo_file(path: &std::path::Path) -> bool {
+    mime_guess2::from_path(path)
+        .first_raw()
+        .is_some_and(|mime| matches!(mime, "image/jpeg" | "image/png" | "image/webp"))
+}
+
 /// File-loader identifier for a native path. egui requires a slash after
 /// `file://` on Windows or it interprets a drive path as a UNC hostname.
 /// Keep native characters: egui's loader does not percent-decode URLs.

@@ -717,18 +717,18 @@ pub enum Command {
     },
     /// Reads a staged picture's size, so the cropper can open on it.
     InspectPicture {
-        target: crate::app::AttachmentId,
+        target: crate::model::AttachmentId,
         path: PathBuf,
     },
     /// Internal: the inspected picture's size, or why it could not be read.
     PictureInspected {
-        target: crate::app::AttachmentId,
+        target: crate::model::AttachmentId,
         result: Result<(u32, u32), String>,
     },
     /// Turns and crops a staged picture, writing the result beside the media
     /// cache so it can be sent in place of the original.
     ApplyPictureEdit {
-        target: crate::app::AttachmentId,
+        target: crate::model::AttachmentId,
         source: crate::model::PictureSource,
         width: u32,
         height: u32,
@@ -737,7 +737,7 @@ pub enum Command {
     },
     /// Internal: the edited picture, ready to replace the staged attachment.
     PictureEdited {
-        target: crate::app::AttachmentId,
+        target: crate::model::AttachmentId,
         result: Result<PathBuf, String>,
     },
     /// Creates an empty local sticker pack under the given name.
@@ -1224,13 +1224,13 @@ pub enum Event {
     },
     /// A staged picture's size, so the cropper can open on it.
     PictureInspected {
-        target: crate::app::AttachmentId,
+        target: crate::model::AttachmentId,
         result: Result<(u32, u32), String>,
     },
     /// An edited picture, ready to replace the staged attachment, or why it
     /// could not be written.
     PictureEdited {
-        target: crate::app::AttachmentId,
+        target: crate::model::AttachmentId,
         result: Result<PathBuf, String>,
     },
     /// A shared sticker pack, ready to view, with its publisher; or why it

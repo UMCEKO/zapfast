@@ -41,7 +41,7 @@ pub enum ThemeChoice {
 impl ThemeChoice {
     /// The choices Settings offers, on every platform. Messages shows the
     /// desktop through its window where the platform can, and is opaque in
-    /// its own colours elsewhere (see [`crate::backdrop`]).
+    /// its own colours elsewhere (see the backdrop module).
     pub const ALL: &[ThemeChoice] = &[Self::System, Self::Light, Self::Dark, Self::Messages];
 
     pub fn label(self) -> &'static str {
